@@ -1,4 +1,4 @@
-package com.example.aprendoai_back
+package com.example.aprendoai_front
 
 import io.flutter.embedding.android.FlutterActivity
 
