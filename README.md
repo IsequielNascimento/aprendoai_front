@@ -1,4 +1,4 @@
-# aprendoai_back
+# aprendoai_front
 
 A new Flutter project.
 
