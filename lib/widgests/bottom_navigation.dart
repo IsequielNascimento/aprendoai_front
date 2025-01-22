@@ -1,4 +1,3 @@
-import 'package:aprendoai_front/pages/home.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -33,12 +32,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
           selectedIcon: Icon(Icons.home, color: Colors.white,),
           icon: Icon(Icons.home_outlined), 
           label: "Home",),
-        NavigationDestination(icon: Icon(Icons.bookmark_border), label: "Collections"),
-        NavigationDestination(icon: Icon(Icons.account_circle), label: "Perfil"),        
+        NavigationDestination(
+        selectedIcon: Icon(Icons.bookmark, color: Color(0xFFFFFFFF),),
+        icon: Icon(Icons.bookmark_border), 
+        label: "Collections"),
+        NavigationDestination(
+        selectedIcon: Icon(Icons.account_circle, color: Color(0xFFFFFFFF),),
+        icon: Icon(Icons.account_circle_outlined),
+        label: "Perfil"),        
       ],  
       
       selectedIndex: _myIndex,
-      indicatorColor: Color.fromRGBO(5, 39, 77, 100),
+      indicatorColor: Color.fromRGBO(5, 39, 77, 1),
 
       
 
