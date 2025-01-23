@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/widgets/folders.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/bottom_navigation.dart';
@@ -14,7 +15,8 @@ class FoldersPage extends StatelessWidget {
           title: const Text("Folders Page"),
         ),
         body: const Center(
-          child: Text('Folders Page'),
+          child: FoldersWidget(),
+
         ),
       ),
     );
