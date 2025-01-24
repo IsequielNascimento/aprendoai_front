@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-class FoldersWidget extends StatelessWidget {
+class FoldersWidget extends StatefulWidget {
   const FoldersWidget({super.key});
 
+  @override
+  State<FoldersWidget> createState() => _FoldersWidgetState();
+}
+
+class _FoldersWidgetState extends State<FoldersWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
