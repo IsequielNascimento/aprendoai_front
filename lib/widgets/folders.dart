@@ -13,7 +13,6 @@ class _FoldersWidgetState extends State<FoldersWidget> {
     return Center(
       //Card Style
       child: Container(
-        width: 320,
         height: 140, 
         decoration: BoxDecoration(
           color: const Color(0xFF05274D),
