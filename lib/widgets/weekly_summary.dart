@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
-class WeeklySummary extends StatelessWidget {
+class WeeklySummary extends StatefulWidget {
   const WeeklySummary({super.key});
 
+  @override
+  State<WeeklySummary> createState() => _WeeklySummaryState();
+}
+
+class _WeeklySummaryState extends State<WeeklySummary> {
   @override
   Widget build(BuildContext context) {
     return Center(
       
-      child: Scaffold(
-        body: Card(
-        margin: EdgeInsets.all(8),
+      child: Stack(
+        children:[ Card(
       
         color: Color.fromRGBO(5, 39, 77, 1),
          child: Container(
-        width: 320,
         height: 120, 
         decoration: BoxDecoration(
           color: const Color(0xFF05274D),
@@ -103,7 +106,7 @@ class WeeklySummary extends StatelessWidget {
         ),
       ),
       ),
-      )
+      ])
     );
   }
 }

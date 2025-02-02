@@ -1,3 +1,5 @@
+import 'package:aprendoai_front/pages/foldersPage.dart';
+import 'package:aprendoai_front/widgets/folders.dart';
 import 'package:aprendoai_front/widgets/weekly_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:aprendoai_front/widgets/bottom_navigation.dart';
@@ -38,9 +40,24 @@ class HomePage extends StatelessWidget {
               WeeklySummary(),
               Row(
                 children: [
-                  Text("Linha 2")
+                  Text("Seus últimos estudos",
+                  style:  const TextStyle(
+                    color:  Color.fromRGBO(5, 39, 77, 1),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ))
                 ],
-              )
+              ),
+
+              Column(
+                children: [
+                  FoldersWidget(),
+                  Padding(padding: EdgeInsets.only(top: 8)
+                  
+                  ),
+                ],
+              ),
+              
               
             ],
           ),
