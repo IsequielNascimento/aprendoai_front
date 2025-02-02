@@ -26,37 +26,45 @@ class FoldersPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SingleChildScrollView(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: Column(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FoldersWidget(),
                 ],
               ),
             ),
-           
+
+            /// Botão "Nova Coleção" que chama o ModalBottomSheet
             Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                
-                color: const Color(0xFF05274D),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              decoration: const BoxDecoration(
+                color: Color(0xFF05274D),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16), topRight: Radius.circular(16)),
               ),
               child: TextButton(
-              
-                style: ButtonStyle(),
                 onPressed: () {
-                  ModalBottomSheetWidget();
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // Para ocupar mais espaço da tela
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    builder: (context) => const ModalBottomSheetWidget(),
+                  );
                 },
-                child: Text("Nova Coleção",
-                style: TextStyle(
-                  color: Colors.white,
+                child: const Text(
+                  "Nova Coleção",
+                  style: TextStyle(
+                    color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                ),),
+                  ),
+                ),
               ),
-            )
-            
+            ),
           ],
         ),
       ),
