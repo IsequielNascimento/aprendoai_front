@@ -1,5 +1,5 @@
-import 'package:aprendoai_front/pages/foldersPage.dart';
-import 'package:aprendoai_front/widgets/folders.dart';
+import 'package:aprendoai_front/pages/collectionPage.dart';
+import 'package:aprendoai_front/widgets/listCollection.dart';
 import 'package:aprendoai_front/widgets/weekly_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:aprendoai_front/widgets/bottom_navigation.dart';
@@ -51,7 +51,7 @@ class HomePage extends StatelessWidget {
 
               Column(
                 children: [
-                  FoldersWidget(),
+                  ListCollectionWidget(),
                   Padding(padding: EdgeInsets.only(top: 8)
                   
                   ),

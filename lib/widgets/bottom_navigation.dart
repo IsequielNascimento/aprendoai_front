@@ -1,4 +1,5 @@
-import 'package:aprendoai_front/pages/foldersPage.dart';
+import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
+import 'package:aprendoai_front/pages/collectionPage.dart';
 import 'package:aprendoai_front/pages/home.dart';
 import 'package:aprendoai_front/pages/profile.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 // Rotas para as telas
   List<Widget> pagesList = const [
     HomePage(),
-    FoldersPage(),
+    CollectionPage(),
     PerfilPage(),
   ];
 
