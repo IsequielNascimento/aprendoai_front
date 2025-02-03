@@ -1,28 +1,37 @@
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
+import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
 import 'package:flutter/material.dart';
 
-class SubjectPage extends StatefulWidget {
+class SubjectPage extends StatelessWidget {
   final String subjectName;
+  final List<Map<String, dynamic>> subjects;
 
-  const SubjectPage({super.key, required this.subjectName});
-
-  @override
-  _SubjectPageState createState() => _SubjectPageState();
-}
-
-class _SubjectPageState extends State<SubjectPage> {
-  final List<Map<String, dynamic>> subjects = [
-    {"title": "Eletricidade", "image": "assets/teste.png"},
-    {"title": "SubjectPage.dart", "image": "assets/teste.png"},
-    {"title": "Dinâmica", "image": "assets/teste.png"},
-  ];
+  const SubjectPage({super.key, required this.subjectName, required this.subjects});
 
   @override
   Widget build(BuildContext context) {
+    // Verifica se a lista de assuntos está vazia antes de construir a tela
+    if (subjects.isEmpty) {
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmptySubjectPage(subjectName: subjectName),
+          ),
+        );
+      });
+
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(), // Pequeno loading enquanto redireciona
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.subjectName,
+          subjectName,
           style: const TextStyle(
             color: Color.fromRGBO(5, 39, 77, 1),
             fontSize: 25,

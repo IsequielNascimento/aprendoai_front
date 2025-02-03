@@ -1,8 +1,8 @@
 import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
+import 'package:aprendoai_front/pages/subjects/SubjectPage.dart';
 import 'package:flutter/material.dart';
 
 class ListSubjectWidget extends StatefulWidget {
-
   const ListSubjectWidget({super.key});
 
   @override
@@ -11,10 +11,30 @@ class ListSubjectWidget extends StatefulWidget {
 
 class _ListSubjectWidgetState extends State<ListSubjectWidget> {
   final List<Map<String, dynamic>> subjects = [
-    {"title": "Física", "image": "assets/FisicaBanner.png", "folders": 3},
-    {"title": "Café", "image": "assets/teste.png", "folders": 9},
-    {"title": "Biologia", "image": "assets/teste.png", "folders": 2},
-   
+    {
+      "title": "Física",
+      "image": "assets/FisicaBanner.png",
+      "folders": 3,
+      "hasContent": true,
+      "content": [
+        {"title": "Eletricidade", "image": "assets/teste.png"},
+        {"title": "Dinâmica", "image": "assets/teste.png"},
+      ],
+    },
+    {
+      "title": "Café",
+      "image": "assets/teste.png",
+      "folders": 9,
+      "hasContent": false,
+      "content": [],
+    },
+    {
+      "title": "Biologia",
+      "image": "assets/teste.png",
+      "folders": 2,
+      "hasContent": false,
+      "content": [],
+    },
   ];
 
   @override
@@ -28,12 +48,24 @@ class _ListSubjectWidgetState extends State<ListSubjectWidget> {
 
         return GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EmptySubjectPage(subjectName: subject["title"]),
-              ),
-            );
+            if (subject["hasContent"]) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubjectPage(
+                    subjectName: subject["title"],
+                    subjects: subject["content"],
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EmptySubjectPage(subjectName: subject["title"]),
+                ),
+              );
+            }
           },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -87,12 +119,24 @@ class _ListSubjectWidgetState extends State<ListSubjectWidget> {
                     ),
                     IconButton.filled(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EmptySubjectPage(subjectName: subject["title"]),
-                          ),
-                        );
+                        if (subject["hasContent"]) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubjectPage(
+                                subjectName: subject["title"],
+                                subjects: subject["content"],
+                              ),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EmptySubjectPage(subjectName: subject["title"]),
+                            ),
+                          );
+                        }
                       },
                       icon: const Icon(Icons.arrow_forward, color: Colors.black),
                       style: IconButton.styleFrom(backgroundColor: Colors.white),

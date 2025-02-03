@@ -1,11 +1,7 @@
-import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
-import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
-import 'package:aprendoai_front/pages/subjects/listSubject.dart';
 import 'package:flutter/material.dart';
 
 class ListCollectionWidget extends StatefulWidget {
-
   const ListCollectionWidget({super.key});
 
   @override
@@ -14,10 +10,41 @@ class ListCollectionWidget extends StatefulWidget {
 
 class _ListCollectionWidgetState extends State<ListCollectionWidget> {
   final List<Map<String, dynamic>> collections = [
-    {"title": "Café", "image": "assets/FisicaBanner.png", "folders": 3},
-    {"title": "listCollection.dart", "image": "assets/teste.png", "folders": 9},
-    {"title": "Biologia", "image": "assets/teste.png", "folders": 2},
-   
+    {
+      "title": "Café",
+      "image": "assets/FisicaBanner.png",
+      "folders": 3,
+      "subjects": [
+        {"title": "História do Café, confia", "image": "assets/teste.png"},
+        {"title": "Cultivo, planta cultivo,", "image": "assets/teste.png"},
+      ]
+    },
+    {
+      "title": "listCollection.dart",
+      "image": "assets/teste.png",
+      "folders": 9,
+      "subjects": [
+        {"title": "Introdução ao Dart", "image": "assets/teste.png"},
+        {"title": "Widgets no Flutter", "image": "assets/teste.png"},
+      ]
+    },
+    {
+      "title": "Biologia",
+      "image": "assets/teste.png",
+      "folders": 2,
+      "subjects": [
+        {"title": "Genética", "image": "assets/teste.png"},
+        {"title": "Evolução", "image": "assets/teste.png"},
+      ]
+    },
+    {
+      "title": "Biologia",
+      "image": "assets/teste.png",
+      "folders": 2,
+      "subjects": [
+        
+      ]
+    },
   ];
 
   @override
@@ -34,9 +61,10 @@ class _ListCollectionWidgetState extends State<ListCollectionWidget> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                //coleção vazia
-               //builder: (context) => EmptyCollectionPage(subjectName: collection["title"]),
-               builder: (context) => SubjectPage(subjectName: collection["title"],),
+                builder: (context) => SubjectPage(
+                  subjectName: collection["title"],
+                  subjects: List<Map<String, dynamic>>.from(collection["subjects"]),
+                ),
               ),
             );
           },
@@ -95,7 +123,10 @@ class _ListCollectionWidgetState extends State<ListCollectionWidget> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EmptyCollectionPage(subjectName: collection["title"]),
+                            builder: (context) => SubjectPage(
+                              subjectName: collection["title"],
+                              subjects: List<Map<String, dynamic>>.from(collection["subjects"]),
+                            ),
                           ),
                         );
                       },
