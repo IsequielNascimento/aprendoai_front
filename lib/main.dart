@@ -1,4 +1,5 @@
 import 'package:aprendoai_front/pages/home.dart';
+import 'package:aprendoai_front/pages/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:aprendoai_front/widgets/bottom_navigation.dart';
 
@@ -16,7 +17,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Aprendo AI',
 
-      home: BottomNavigation(),
+      home:
+      // RegisterPage(),
+       BottomNavigation(),
     );
     
   }

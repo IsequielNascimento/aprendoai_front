@@ -5,17 +5,14 @@ class PerfilPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "PERFIL",
-      home: Scaffold(
-        appBar: AppBar(
-           title: const Text("Folders Page"),
-           backgroundColor:Colors.blue.shade900,
-        ),
-        body: Center(
-          child: Text("PERFIL"),
-        ),
-
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Folders Page"),
+        backgroundColor: Colors.blue.shade900,
+      ),
+      body: Center(
+        child:
+         Text("PERFIL"),
       ),
     );
   }
