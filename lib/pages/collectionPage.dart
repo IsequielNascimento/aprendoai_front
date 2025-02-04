@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/listCollection.dart';
+import 'collections/listCollection.dart';
 import '../modal/modal_bottom_sheet.dart';
 
 class CollectionPage extends StatelessWidget {
@@ -20,15 +20,14 @@ class CollectionPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child:           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListCollectionWidget(),
-              SizedBox(height: 20),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListCollectionWidget(),
+            SizedBox(height: 20),
+          ],
         ),
-      
+      ),
       bottomNavigationBar: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
