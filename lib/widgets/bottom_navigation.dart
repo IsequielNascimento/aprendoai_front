@@ -1,6 +1,7 @@
-import 'package:aprendoai_front/pages/folders.dart';
+import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
+import 'package:aprendoai_front/pages/collectionPage.dart';
 import 'package:aprendoai_front/pages/home.dart';
-import 'package:aprendoai_front/pages/perfil.dart';
+import 'package:aprendoai_front/pages/profile.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -15,7 +16,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 // Rotas para as telas
   List<Widget> pagesList = const [
     HomePage(),
-    FoldersPage(),
+    CollectionPage(),
     PerfilPage(),
   ];
 
@@ -45,7 +46,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               color: Colors.white,
             ),
             icon: Icon(Icons.home_outlined),
-            label: "Home",
+            label: "Início",
           ),
           NavigationDestination(
               selectedIcon: Icon(
@@ -53,7 +54,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                 color: Color(0xFFFFFFFF),
               ),
               icon: Icon(Icons.bookmark_border),
-              label: "Collections"),
+              label: "Coleções"),
           NavigationDestination(
               selectedIcon: Icon(
                 Icons.account_circle,
