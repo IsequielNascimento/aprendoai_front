@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListCollectionWidget extends StatefulWidget {
-const ListCollectionWidget({super.key});
+  const ListCollectionWidget({super.key});
 
   @override
   State<ListCollectionWidget> createState() => ListCollectionWidgetState();
@@ -20,41 +21,39 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
     fetchCollections();
   }
 
-Future<void> fetchCollections() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  int? userId = prefs.getInt('userId');
+  Future<void> fetchCollections() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
 
-  if (userId == null) {
-    setState(() => isLoading = false);
-    return;
+    if (userId == null) {
+      setState(() => isLoading = false);
+      return;
+    }
+
+    const int quantity = 1000;
+    const int page = 1;
+
+    final response = await http.get(
+      Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      setState(() {
+        collections = List<Map<String, dynamic>>.from(data['data'].map((folder) => {
+              "title": folder["nameFolder"],
+              "image": "assets/teste.png",
+              //"subjects": [], // Adiciona um campo subjects vazio por enquanto
+              "subjects": <Map<String, dynamic>>[],
+
+            }));
+        isLoading = false;
+      });
+    } else {
+      setState(() => isLoading = false);
+    }
   }
-
-  // Definindo quantidade grande para trazer tudo
-  const int quantity = 1000; 
-  const int page = 1;
-
-  final response = await http.get(
-    Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page')
-  );
-
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    
-    setState(() {
-      collections = List<Map<String, dynamic>>.from(data['data'].map((folder) => {
-            "title": folder["nameFolder"],
-            "image": "assets/teste.png",
-            "folders": 1,
-            "subjects": []
-          }));
-      isLoading = false;
-    });
-  } else {
-    setState(() => isLoading = false);
-  }
-}
-
-
 
 Future<void> addCollection(String name) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -88,7 +87,17 @@ Future<void> addCollection(String name) async {
                 itemBuilder: (context, index) {
                   final collection = collections[index];
                   return GestureDetector(
-                    onTap: () {}, // Ajuste conforme necessário
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubjectPage(
+                            subjectName: collection["title"],
+                            subjects: collection["subjects"], // Passando a lista de subjects (por enquanto vazia)
+                          ),
+                        ),
+                      );
+                    },
                     child: _buildCollectionCard(collection),
                   );
                 },
@@ -135,4 +144,3 @@ Future<void> addCollection(String name) async {
     );
   }
 }
- 
