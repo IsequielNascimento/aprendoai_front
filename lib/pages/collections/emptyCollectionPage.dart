@@ -1,17 +1,24 @@
-import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:flutter/material.dart';
+import 'package:aprendoai_front/modal/addSubjectModal.dart';
 
 class EmptyCollectionPage extends StatelessWidget {
-  final String subjectName;
+  final String userId; // Adicione essa linha
+  final String collectionId;
+  final String collectionName;
 
-  const EmptyCollectionPage({super.key, required this.subjectName});
+  const EmptyCollectionPage({
+    Key? key,
+    required this.userId, // Adicione esse parâmetro
+    required this.collectionId,
+    required this.collectionName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          subjectName,
+          collectionName,
           style: const TextStyle(
             color: Color.fromRGBO(5, 39, 77, 1),
             fontSize: 25,
@@ -51,7 +58,13 @@ class EmptyCollectionPage extends StatelessWidget {
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            builder: (context) => const AddSubjectModal(),
+            builder: (context) => AddSubjectModal(
+              userId: userId, // Agora passamos corretamente o userId
+              collectionId: collectionId,
+              onAddSubject: (newSubject) {
+                // Você pode adicionar lógica aqui caso precise atualizar algo na UI
+              },
+            ),
           );
         },
         child: const Icon(Icons.add, color: Colors.white),

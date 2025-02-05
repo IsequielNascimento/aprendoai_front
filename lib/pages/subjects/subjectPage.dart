@@ -5,13 +5,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SubjectPage extends StatefulWidget {
-  final int collectionId;
-  final String collectionName; // Novo campo para armazenar o nome da coleção
+  final String userId; // Adicione essa linha
+  final String collectionId;
+  final String collectionName;
 
-  const SubjectPage({super.key, required this.collectionId, required this.collectionName});
+  const SubjectPage({
+    Key? key,
+    required this.userId, // Adicione esse parâmetro
+    required this.collectionId,
+    required this.collectionName,
+  }) : super(key: key);
 
   @override
-  _SubjectPageState createState() => _SubjectPageState();
+  State<SubjectPage> createState() => _SubjectPageState();
 }
 
 class _SubjectPageState extends State<SubjectPage> {
@@ -25,7 +31,8 @@ class _SubjectPageState extends State<SubjectPage> {
   }
 
   Future<void> fetchSubjects() async {
-    final url = Uri.parse("https://seu-backend.com/api/collections/${widget.collectionId}");
+    final url = Uri.parse(
+        "http://192.168.0.2:3000/api/user/${widget.userId}/collection/${widget.collectionId}");
 
     try {
       final response = await http.get(url);
@@ -58,16 +65,20 @@ class _SubjectPageState extends State<SubjectPage> {
     if (subjects.isEmpty) {
       return Scaffold(
         body: Center(
-      child: EmptyCollectionPage(subjectName: widget.collectionName), // Passando o nome da coleção
+          child: EmptyCollectionPage(
+            userId: widget.userId, // Agora o userId é passado corretamente
+            collectionId: widget.collectionId,
+            collectionName: widget.collectionName,
+          ),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Assuntos",
-          style: TextStyle(
+        title: Text(
+          widget.collectionName, // Exibe o nome da coleção no AppBar
+          style: const TextStyle(
             color: Color.fromRGBO(5, 39, 77, 1),
             fontSize: 25,
             fontWeight: FontWeight.bold,

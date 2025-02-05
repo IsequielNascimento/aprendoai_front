@@ -14,11 +14,25 @@ class ListCollectionWidget extends StatefulWidget {
 class ListCollectionWidgetState extends State<ListCollectionWidget> {
   List<Map<String, dynamic>> collections = [];
   bool isLoading = true;
+  int? userId; // Adicione esta variável
 
   @override
   void initState() {
     super.initState();
-    fetchCollections();
+    _loadUserId(); // Carrega o userId primeiro
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getInt('userId');
+    });
+
+    if (userId != null) {
+      fetchCollections(); // Buscar coleções apenas se userId estiver disponível
+    } else {
+      setState(() => isLoading = false);
+    }
   }
 
   Future<void> fetchCollections() async {
@@ -55,7 +69,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
         collections =
             List<Map<String, dynamic>>.from(data['data'].map((folder) => {
                   "id": folder[
-                      "id"], // ID da coleção, necessário para a navegação correta
+                      "id"], // ID da coleção, necessário para a navegação 
                   "title": folder["nameFolder"],
                   "image": "assets/teste.png",
                   "subjects": <Map<String, dynamic>>[],
@@ -101,16 +115,23 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
                   final collection = collections[index];
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SubjectPage(
-                            collectionId: collection["id"],
-                            collectionName: collection[
-                                "title"], // Passando o nome da coleção
+                      if (userId != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubjectPage(
+                              userId: userId.toString(), // Passando userId
+                              collectionId: collection["id"].toString(),
+                              collectionName: collection["title"],
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Erro: usuário não identificado.")),
+                        );
+                      }
                     },
                     child: _buildCollectionCard(collection),
                   );
