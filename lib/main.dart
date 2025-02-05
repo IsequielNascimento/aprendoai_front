@@ -18,8 +18,9 @@ class MyApp extends StatelessWidget {
       title: 'Aprendo AI',
 
       home:
-      // RegisterPage(),
-       BottomNavigation(),
+    RegisterPage(),
+           //       BottomNavigation(),
+
     );
     
   }
