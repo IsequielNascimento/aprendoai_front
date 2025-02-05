@@ -2,8 +2,20 @@ import 'package:flutter/material.dart';
 import 'collections/listCollection.dart';
 import '../modal/modal_bottom_sheet.dart';
 
-class CollectionPage extends StatelessWidget {
+class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});
+
+  @override
+  State<CollectionPage> createState() => _CollectionPageState();
+}
+
+class _CollectionPageState extends State<CollectionPage> {
+  final GlobalKey<ListCollectionWidgetState> _listCollectionKey = GlobalKey();
+
+  /// Função para adicionar nova coleção
+  void _addCollection(String name) {
+    _listCollectionKey.currentState?.addCollection(name);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +35,8 @@ class CollectionPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListCollectionWidget(),
-            SizedBox(height: 20),
+            ListCollectionWidget(key: _listCollectionKey), // Passando a key
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -43,7 +55,9 @@ class CollectionPage extends StatelessWidget {
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              builder: (context) => const ModalBottomSheetWidget(),
+              builder: (context) => ModalBottomSheetWidget(
+                onAddCollection: _addCollection, // Passando a função
+              ),
             );
           },
           child: const Text(

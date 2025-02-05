@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
-class ModalBottomSheetWidget extends StatelessWidget {
-  const ModalBottomSheetWidget({super.key});
+class ModalBottomSheetWidget extends StatefulWidget {
+  final Function(String) onAddCollection;
+
+  const ModalBottomSheetWidget({super.key, required this.onAddCollection});
+
+  @override
+  State<ModalBottomSheetWidget> createState() => _ModalBottomSheetWidgetState();
+}
+
+class _ModalBottomSheetWidgetState extends State<ModalBottomSheetWidget> {
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom, // Ajusta para o teclado
-      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
@@ -18,7 +25,6 @@ class ModalBottomSheetWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            /// Botão de Fechar
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -32,40 +38,16 @@ class ModalBottomSheetWidget extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
-            /// Campo de Texto - Nome da Coleção
             TextField(
+              controller: _controller,
               decoration: InputDecoration(
                 labelText: "Nome da coleção",
                 hintText: "Ex: Física, Matemática",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
-
-            const SizedBox(height: 16),
-
-            /// Botão para Adicionar Foto
-            Container(
-              height: 120,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.camera_alt),
-                label: const Text("Adicionar foto"),
-              ),
-            ),
-
             const SizedBox(height: 24),
-
-            /// Botão "Adicionar"
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -74,8 +56,10 @@ class ModalBottomSheetWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                  // Lógica para salvar a coleção
-                  Navigator.pop(context);
+                  if (_controller.text.isNotEmpty) {
+                    widget.onAddCollection(_controller.text);
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text(
                   "Adicionar",
