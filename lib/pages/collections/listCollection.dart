@@ -1,68 +1,98 @@
-import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
-import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListCollectionWidget extends StatefulWidget {
-  const ListCollectionWidget({super.key});
+const ListCollectionWidget({super.key});
 
   @override
-  State<ListCollectionWidget> createState() => _ListCollectionWidgetState();
+  State<ListCollectionWidget> createState() => ListCollectionWidgetState();
 }
 
-class _ListCollectionWidgetState extends State<ListCollectionWidget> {
-  final List<Map<String, dynamic>> collections = [
-    {
-      "title": "Física",
-      "image": "assets/FisicaBanner.png",
-      "folders": 3,
-      "subjects": [
-        {"title": "Eletricidade", "image": "assets/teste.png"},
-        {"title": "Cultivo", "image": "assets/teste.png"},
-      ]
-    },
-    {
-      "title": "Flutter",
-      "image": "assets/teste.png",
-      "folders": 9,
-      "subjects": []
-    },
-  ];
+class ListCollectionWidgetState extends State<ListCollectionWidget> {
+  List<Map<String, dynamic>> collections = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCollections();
+  }
+
+Future<void> fetchCollections() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int? userId = prefs.getInt('userId');
+
+  if (userId == null) {
+    setState(() => isLoading = false);
+    return;
+  }
+
+  // Definindo quantidade grande para trazer tudo
+  const int quantity = 1000; 
+  const int page = 1;
+
+  final response = await http.get(
+    Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page')
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    
+    setState(() {
+      collections = List<Map<String, dynamic>>.from(data['data'].map((folder) => {
+            "title": folder["nameFolder"],
+            "image": "assets/teste.png",
+            "folders": 1,
+            "subjects": []
+          }));
+      isLoading = false;
+    });
+  } else {
+    setState(() => isLoading = false);
+  }
+}
+
+
+
+Future<void> addCollection(String name) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int? userId = prefs.getInt('userId');
+  const int quantity = 1000; 
+  const int page = 1;
+
+  if (userId == null) return;
+
+  final response = await http.post(
+    Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({"nameFolder": name, "userId": userId}),
+  );
+
+  if (response.statusCode == 200) {
+    fetchCollections();
+  }
+}
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: collections.length,
-      itemBuilder: (context, index) {
-        final collection = collections[index];
-        final subjects = List<Map<String, dynamic>>.from(collection["subjects"]);
-
-        return GestureDetector(
-          onTap: () {
-            if (subjects.isEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EmptyCollectionPage(subjectName: collection["title"]),
-                ),
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : collections.isEmpty
+            ? const Center(child: Text("Nenhuma coleção encontrada"))
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: collections.length,
+                itemBuilder: (context, index) {
+                  final collection = collections[index];
+                  return GestureDetector(
+                    onTap: () {}, // Ajuste conforme necessário
+                    child: _buildCollectionCard(collection),
+                  );
+                },
               );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SubjectPage(
-                    subjectName: collection["title"],
-                    subjects: subjects,
-                  ),
-                ),
-              );
-            }
-          },
-          child: _buildCollectionCard(collection),
-        );
-      },
-    );
   }
 
   Widget _buildCollectionCard(Map<String, dynamic> collection) {
@@ -76,7 +106,6 @@ class _ListCollectionWidgetState extends State<ListCollectionWidget> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
@@ -91,54 +120,13 @@ class _ListCollectionWidgetState extends State<ListCollectionWidget> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${collection["folders"]} pastas',
-                        style: const TextStyle(fontSize: 12, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
                     Text(
                       collection["title"],
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-              ),
-              IconButton.filled(
-                onPressed: () {
-                  if (collection["subjects"].isEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmptyCollectionPage(subjectName: collection["title"]),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubjectPage(
-                          subjectName: collection["title"],
-                          subjects: List<Map<String, dynamic>>.from(collection["subjects"]),
-                        ),
-                      ),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.arrow_forward, color: Colors.black),
-                style: IconButton.styleFrom(backgroundColor: Colors.white),
               ),
             ],
           ),
@@ -147,3 +135,4 @@ class _ListCollectionWidgetState extends State<ListCollectionWidget> {
     );
   }
 }
+ 
