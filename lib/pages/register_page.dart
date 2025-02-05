@@ -20,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       var dio = Dio();
       var response = await dio.post(
-        'localhost:3000/api/register/', //AAAAAAAAAAAAAAAAA NADA FUNCIONA
+        'http://192.168.0.2:3000/api/register', //AAAAAAAAAAAAAAAAA NADA FUNCIONA
         data: {
           'firstName': nameController.text,
           'lastName': lastNameController.text,

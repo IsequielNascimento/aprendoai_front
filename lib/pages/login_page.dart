@@ -1,6 +1,8 @@
+import 'package:aprendoai_front/pages/aprendoAI.dart';
 import 'package:aprendoai_front/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,33 +17,39 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool rememberMe = false;
 
-  Future<void> login() async {
-    try {
-      var dio = Dio();
-      var response = await dio.post(
-        'localhost:3000/api/login/', 
-        data: {
-          'email': emailController.text,
-          'password': passwordController.text,
-        },
-      );
+Future<void> login() async {
+  try {
+    var dio = Dio();
+    var response = await dio.post(
+      'http://192.168.0.2:3000/api/login', 
+      data: {
+        'email': emailController.text,
+        'password': passwordController.text,
+      },
+    );
 
-      if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'] ?? 'Erro ao fazer login')),
-        );
-      }
-    } catch (e) {
+    if (response.statusCode == 200) {
+      var userId = response.data['user']['id']; // Ajuste para corresponder à estrutura da API
+
+      // Armazena o ID do usuário localmente
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('userId', userId);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Aprendoai()),
+      );
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro de conexão com o servidor')),
+        SnackBar(content: Text(response.data['message'] ?? 'Erro ao fazer login')),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erro de conexão com o servidor')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                   onChanged: (value) {
                     setState(() => rememberMe = value!);
                   },
-                ),
+                ),  
                 const Text('Lembrar de mim'),
                 const Spacer(),
                 TextButton(
