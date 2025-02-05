@@ -34,20 +34,32 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
     const int page = 1;
 
     final response = await http.get(
-      Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+      Uri.parse(
+          'http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
+      // setState(() {
+      //   collections =
+      //       List<Map<String, dynamic>>.from(data['data'].map((folder) => {
+      //             "title": folder["nameFolder"],
+      //             "image": "assets/teste.png",
+      //             //"subjects": [], // Adiciona um campo subjects vazio por enquanto
+      //             "subjects": <Map<String, dynamic>>[],
+      //           }));
+      //   isLoading = false;
+      // });
       setState(() {
-        collections = List<Map<String, dynamic>>.from(data['data'].map((folder) => {
-              "title": folder["nameFolder"],
-              "image": "assets/teste.png",
-              //"subjects": [], // Adiciona um campo subjects vazio por enquanto
-              "subjects": <Map<String, dynamic>>[],
-
-            }));
+        collections =
+            List<Map<String, dynamic>>.from(data['data'].map((folder) => {
+                  "id": folder[
+                      "id"], // ID da coleção, necessário para a navegação correta
+                  "title": folder["nameFolder"],
+                  "image": "assets/teste.png",
+                  "subjects": <Map<String, dynamic>>[],
+                }));
         isLoading = false;
       });
     } else {
@@ -55,24 +67,25 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
     }
   }
 
-Future<void> addCollection(String name) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  int? userId = prefs.getInt('userId');
-  const int quantity = 1000; 
-  const int page = 1;
+  Future<void> addCollection(String name) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
+    const int quantity = 1000;
+    const int page = 1;
 
-  if (userId == null) return;
+    if (userId == null) return;
 
-  final response = await http.post(
-    Uri.parse('http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode({"nameFolder": name, "userId": userId}),
-  );
+    final response = await http.post(
+      Uri.parse(
+          'http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"nameFolder": name, "userId": userId}),
+    );
 
-  if (response.statusCode == 200) {
-    fetchCollections();
+    if (response.statusCode == 200) {
+      fetchCollections();
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +105,9 @@ Future<void> addCollection(String name) async {
                         context,
                         MaterialPageRoute(
                           builder: (context) => SubjectPage(
-                            subjectName: collection["title"],
-                            subjects: collection["subjects"], // Passando a lista de subjects (por enquanto vazia)
+                            collectionId: collection["id"],
+                            collectionName: collection[
+                                "title"], // Passando o nome da coleção
                           ),
                         ),
                       );
@@ -132,7 +146,10 @@ Future<void> addCollection(String name) async {
                   children: [
                     Text(
                       collection["title"],
-                      style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

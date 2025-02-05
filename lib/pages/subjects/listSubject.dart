@@ -20,19 +20,19 @@ class ListSubjectWidget extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => SubjectDetailsPage(
-                  subjectTitle: subject["title"],
-                  summary: "Este é um resumo do assunto ${subject["title"]}.",
+                  subjectTitle: subject["nameCollection"], // Nome correto vindo do back-end
+                  summary: subject["resumeCollection"] ?? "Sem resumo disponível.",
                 ),
               ),
             );
           },
-          child: _buildSubjectCard(context, subject), // Passando o contexto aqui
+          child: _buildSubjectCard(context, subject),
         );
       },
     );
   }
 
-  Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) { // Agora recebe o contexto
+  Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -47,7 +47,7 @@ class ListSubjectWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  subject["image"],
+                  "assets/teste.png", // Imagem padrão
                   height: 80,
                   width: 80,
                   fit: BoxFit.cover,
@@ -56,7 +56,7 @@ class ListSubjectWidget extends StatelessWidget {
               const SizedBox(width: 18),
               Expanded(
                 child: Text(
-                  subject["title"],
+                  subject["nameCollection"], // Nome correto vindo do back-end
                   style: const TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -70,8 +70,8 @@ class ListSubjectWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SubjectDetailsPage(
-                        subjectTitle: subject["title"],
-                        summary: "Este é um resumo do assunto ${subject["title"]}.",
+                        subjectTitle: subject["nameCollection"],
+                        summary: subject["resumeCollection"] ?? "Sem resumo disponível.",
                       ),
                     ),
                   );
