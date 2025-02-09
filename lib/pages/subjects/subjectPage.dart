@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:flutter/material.dart';
 import 'listSubject.dart';
@@ -5,13 +6,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SubjectPage extends StatefulWidget {
-  final String userId; // Adicione essa linha
+  final String userId; 
   final String collectionId;
   final String collectionName;
 
   const SubjectPage({
     Key? key,
-    required this.userId, // Adicione esse parâmetro
+    required this.userId,
     required this.collectionId,
     required this.collectionName,
   }) : super(key: key);
@@ -54,6 +55,26 @@ class _SubjectPageState extends State<SubjectPage> {
     }
   }
 
+  // Função para exibir o modal de adicionar assunto
+  void _showAddSubjectModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return AddSubjectModal(
+          userId: widget.userId,
+          collectionId: widget.collectionId,
+          onAddSubject: (newSubjectName) {
+            // Atualize a lista de assuntos após adicionar um novo
+            setState(() {
+              subjects.add({"nameCollection": newSubjectName});
+            });
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -66,10 +87,15 @@ class _SubjectPageState extends State<SubjectPage> {
       return Scaffold(
         body: Center(
           child: EmptyCollectionPage(
-            userId: widget.userId, // Agora o userId é passado corretamente
+            userId: widget.userId,
             collectionId: widget.collectionId,
             collectionName: widget.collectionName,
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _showAddSubjectModal,
+          child: const Icon(Icons.add),
+          backgroundColor: const Color(0xFF05274D),
         ),
       );
     }
@@ -77,7 +103,7 @@ class _SubjectPageState extends State<SubjectPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.collectionName, // Exibe o nome da coleção no AppBar
+          widget.collectionName,
           style: const TextStyle(
             color: Color.fromRGBO(5, 39, 77, 1),
             fontSize: 25,
@@ -86,6 +112,11 @@ class _SubjectPageState extends State<SubjectPage> {
         ),
       ),
       body: ListSubjectWidget(subjects: subjects),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddSubjectModal,
+        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF05274D),
+      ),
     );
   }
 }

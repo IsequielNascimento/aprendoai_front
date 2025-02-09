@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
 
 class EmptyCollectionPage extends StatelessWidget {
-  final String userId; // Adicione essa linha
+  final String userId;
   final String collectionId;
   final String collectionName;
 
   const EmptyCollectionPage({
     Key? key,
-    required this.userId, // Adicione esse parâmetro
+    required this.userId,
     required this.collectionId,
     required this.collectionName,
   }) : super(key: key);
@@ -50,22 +50,27 @@ class EmptyCollectionPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'unique_tag_1', // Atribua uma tag única
         backgroundColor: const Color(0xFF05274D),
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            builder: (context) => AddSubjectModal(
-              userId: userId, // Agora passamos corretamente o userId
-              collectionId: collectionId,
-              onAddSubject: (newSubject) {
-                // Você pode adicionar lógica aqui caso precise atualizar algo na UI
-              },
-            ),
-          );
+          // Evitar que o modal sobreponha ou descongele a tela
+          Future.delayed(Duration.zero, () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) => AddSubjectModal(
+                userId: userId,
+                collectionId: collectionId,
+                onAddSubject: (newSubject) {
+                  // Atualizar ou processar o assunto
+                  // Esse trecho de código será chamado quando um novo assunto for adicionado.
+                },
+              ),
+            );
+          });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),

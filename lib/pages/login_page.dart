@@ -1,5 +1,4 @@
 import 'package:aprendoai_front/pages/aprendoAI.dart';
-import 'package:aprendoai_front/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
