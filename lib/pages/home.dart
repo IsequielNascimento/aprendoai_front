@@ -1,8 +1,6 @@
-import 'package:aprendoai_front/pages/collectionPage.dart';
 import 'package:aprendoai_front/pages/collections/listCollection.dart';
 import 'package:aprendoai_front/widgets/weekly_summary.dart';
 import 'package:flutter/material.dart';
-import 'package:aprendoai_front/widgets/bottom_navigation.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,44 +9,40 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        title: const Text(""),  // Pode ser deixado vazio se não for necessário um título
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //
             Row(
               children: [
-                Text(
+                const Text(
                   "Resumo Semanal",
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color.fromRGBO(5, 39, 77, 1),
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
-                )
+                ),
               ],
             ),
-            WeeklySummary(),
+            const WeeklySummary(),
             Row(
               children: [
-                Text("Seus últimos estudos",
-                    style: const TextStyle(
-                      color: Color.fromRGBO(5, 39, 77, 1),
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ))
+                const Text(
+                  "Seus últimos estudos",
+                  style: TextStyle(
+                    color: Color.fromRGBO(5, 39, 77, 1),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
-
-            Column(
-              children: [
-                ListCollectionWidget(),
-                Padding(padding: EdgeInsets.only(top: 8)),
-              ],
-            ),
+            const ListCollectionWidget(),
+            const SizedBox(height: 8),  // Pode ser mais legível que o Padding
           ],
         ),
       ),

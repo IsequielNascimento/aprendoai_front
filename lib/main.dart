@@ -1,7 +1,5 @@
-import 'package:aprendoai_front/pages/home.dart';
 import 'package:aprendoai_front/pages/register_page.dart';
 import 'package:flutter/material.dart';
-import 'package:aprendoai_front/widgets/bottom_navigation.dart';
 
 void main() {
   runApp(const MyApp());

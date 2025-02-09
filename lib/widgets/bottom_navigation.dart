@@ -1,4 +1,3 @@
-import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
 import 'package:aprendoai_front/pages/collectionPage.dart';
 import 'package:aprendoai_front/pages/home.dart';
 import 'package:aprendoai_front/pages/profile.dart';
