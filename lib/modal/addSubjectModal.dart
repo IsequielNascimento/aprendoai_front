@@ -21,16 +21,18 @@ class AddSubjectModal extends StatefulWidget {
 class _AddSubjectModalState extends State<AddSubjectModal> {
   final TextEditingController _controller = TextEditingController();
   bool isLoading = false;
-
-  Future<void> _addSubject() async {
+Future<void> _addSubject() async {
   if (_controller.text.isEmpty) return;
 
   setState(() => isLoading = true);
 
   final response = await http.post(
-    Uri.parse("http://192.168.0.2:3000/api/user/${widget.userId}/collection/${widget.collectionId}"),
+    Uri.parse("http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.collectionId}/collection"),
     headers: {"Content-Type": "application/json"},
-    body: jsonEncode({"nameCollection": _controller.text}),
+    body: jsonEncode({
+      "nameCollection": _controller.text,
+      "resumeCollection": "Descrição breve do assunto", // Adicionando o campo de resumo
+    }),
   );
 
   setState(() => isLoading = false);
@@ -44,6 +46,8 @@ class _AddSubjectModalState extends State<AddSubjectModal> {
     );
   }
 }
+
+
 
 
   @override
