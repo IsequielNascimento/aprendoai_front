@@ -84,7 +84,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
   Future<void> addCollection(String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    const int quantity = 1000;
+    const int quantity = 20;
     const int page = 1;
 
     if (userId == null) return;

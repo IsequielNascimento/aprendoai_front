@@ -32,7 +32,7 @@ class _SubjectPageState extends State<SubjectPage> {
 
   Future<void> fetchSubjects() async {
     final url = Uri.parse(
-        "http://192.168.0.2:3000/api/user/${widget.userId}/collection/${widget.collectionId}");
+        "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.collectionId}/collection");
 
     try {
       final response = await http.get(url);
