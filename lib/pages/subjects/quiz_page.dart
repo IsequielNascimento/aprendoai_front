@@ -36,15 +36,37 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Verifica se a lista de perguntas está vazia
+    if (widget.questions.isEmpty) {
+      return Scaffold(
+        backgroundColor: Appthemes.primary,
+        appBar: AppBar(
+          backgroundColor: Appthemes.primary,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text("Quiz", style: TextStyle(color: Colors.white)),
+        ),
+        body: const Center(
+          child: Text(
+            "Nenhuma pergunta disponível!",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+        ),
+      );
+    }
+
     final questionData = widget.questions[currentQuestionIndex];
     final questionText = questionData["question"];
-    final options = questionData["options"] as List<String>;
+    final options = (questionData["options"] as List<dynamic>).map((e) => e.toString()).toList();
     final correctAnswer = questionData["correctAnswer"];
 
     return Scaffold(
       backgroundColor: Appthemes.primary,
       appBar: AppBar(
-        backgroundColor:  Appthemes.primary,
+        backgroundColor: Appthemes.primary,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -54,13 +76,19 @@ class _QuizPageState extends State<QuizPage> {
           children: [
             Text(
               "Quiz | ${questionData["source"]}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             const SizedBox(width: 8),
             const Icon(Icons.bolt, color: Colors.yellow, size: 18),
             const Text(
               " Gerado por IA",
-              style: TextStyle(fontSize: 14, color: Colors.white70, fontStyle: FontStyle.italic),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white70,
+                  fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -81,11 +109,14 @@ class _QuizPageState extends State<QuizPage> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Pergunta
             Text(
               questionText,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             const SizedBox(height: 20),
 
@@ -104,7 +135,7 @@ class _QuizPageState extends State<QuizPage> {
                     buttonColor = Colors.red[700];
                   }
                 } else {
-                  buttonColor =  Appthemes.primary;
+                  buttonColor = Appthemes.primary;
                 }
 
                 return GestureDetector(
@@ -114,7 +145,6 @@ class _QuizPageState extends State<QuizPage> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: buttonColor,
-                  //    border: Border.all(color: Colors.white, width: 1.5),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -129,7 +159,10 @@ class _QuizPageState extends State<QuizPage> {
                           child: Center(
                             child: Text(
                               String.fromCharCode(65 + index), // A, B, C, D
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor),
                             ),
                           ),
                         ),
@@ -162,7 +195,8 @@ class _QuizPageState extends State<QuizPage> {
                 onPressed: () {
                   // Lógica para favoritar a pergunta
                 },
-                child: const Text("Favoritar", style: TextStyle(fontSize: 16, color: Colors.white)),
+                child: const Text("Favoritar",
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
           ],

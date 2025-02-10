@@ -21,10 +21,10 @@ class SubjectDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(subjectTitle, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-
+            Text(subjectTitle,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -44,20 +44,25 @@ class SubjectDetailsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  summary.length > 100 ? "${summary.substring(0, 100)}..." : summary,
+                  summary.length > 100
+                      ? "${summary.substring(0, 100)}..."
+                      : summary,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => QuizCardsPage(subjectTitle: subjectTitle),
+                    builder: (context) => QuizCardsPage(
+                      userId: "1", // Substitua pelo ID real do usuário
+                      folderId: "1", // Substitua pelo ID real da pasta
+                      subjectId: "1", // Substitua pelo ID real da coleção
+                      subjectTitle: subjectTitle,
+                    ),
                   ),
                 );
               },
@@ -68,4 +73,5 @@ class SubjectDetailsPage extends StatelessWidget {
         ),
       ),
     );
-  }}
+  }
+}
