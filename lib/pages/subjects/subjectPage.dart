@@ -1,5 +1,6 @@
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
+import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
 import 'package:flutter/material.dart';
 import 'listSubject.dart';
 import 'package:http/http.dart' as http;
@@ -104,13 +105,17 @@ class _SubjectPageState extends State<SubjectPage> {
       );
     }
 
+// No método build onde o EmptyCollectionPage é criado
     if (subjects.isEmpty) {
       return Scaffold(
         body: Center(
-          child: EmptyCollectionPage(
+          child: EmptySubjectPage(
+            // Alterado para EmptySubjectPage
+            subjectName: widget.collectionName,
             userId: widget.userId,
-            collectionId: widget.folderId,
-            collectionName: widget.collectionName,
+            folderId: widget.folderId,
+            subjectId:
+                widget.folderId, // Ou o ID correto da coleção se disponível
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -134,7 +139,9 @@ class _SubjectPageState extends State<SubjectPage> {
       ),
       body: ListSubjectWidget(
         subjects: subjects,
-        fetchSummary: fetchSummary, // Passando a função como parâmetro
+        fetchSummary: fetchSummary,
+        userId: widget.userId,
+        folderId: widget.folderId,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddSubjectModal,

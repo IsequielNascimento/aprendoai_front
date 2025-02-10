@@ -5,10 +5,14 @@ import 'subjectDetailPage.dart';
 class ListSubjectWidget extends StatelessWidget {
   final List<Map<String, dynamic>> subjects;
   final Future<String> Function(String subjectId) fetchSummary;
+  final String userId;
+  final String folderId;
 
   const ListSubjectWidget({
     Key? key,
     required this.subjects,
+    required this.userId,
+    required this.folderId,
     required this.fetchSummary,
   }) : super(key: key);
 
@@ -18,51 +22,35 @@ class ListSubjectWidget extends StatelessWidget {
       itemCount: subjects.length,
       itemBuilder: (context, index) {
         final subject = subjects[index];
-        final String subjectId = subject["id"].toString();
+        final String subjectId = subject["id"].toString(); // Conversão para String
 
         return ListTile(
-          title: Text(subject["nameCollection"]),
-          onTap: () async {
-            final summary = await fetchSummary(subjectId); // Busca o resumo
-
-            // Verifica se o resumo está vazio ou não
-            if (summary.isNotEmpty) {
-              // Se houver resumo, vai para a SubjectDetailsPage
+            title: Text(subject["nameCollection"]),
+            onTap: () async {
+              String summary = await fetchSummary(subjectId); // Passando o subjectId como String
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SubjectDetailsPage(
-                    subjectTitle: subject["nameCollection"],
-                    summary: summary, // Passando o resumo gerado
-                  ),
+                  builder: (context) => summary.isEmpty
+                      ? EmptySubjectPage(
+                          subjectName: subject['nameCollection'],
+                          userId: userId,
+                          folderId: folderId,
+                          subjectId: subjectId, // Usando o subjectId como String
+                        )
+                      : SubjectDetailsPage(
+                          subjectTitle: subject['nameCollection'],
+                          summary: summary,
+                        ),
                 ),
               );
-            } else {
-              // Se o resumo estiver vazio, vai para a EmptySubjectPage
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EmptySubjectPage(
-                    subjectName: subject[
-                        "nameCollection"], // Aqui estamos passando o nome do assunto
-                    userId: subject["userId"]
-                        .toString(), // Converta para String se for int
-                    folderId: subject["folderId"]
-                        .toString(), // Converta para String se for int
-                    subjectId: subject["collectionId"]
-                        .toString(), // Converta para String se for int
-                  ),
-                ),
-              );
-            }
-          },
-        );
+            });
       },
     );
   }
 
   Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) {
-    final String subjectId = subject["id"].toString();
+    final String subjectId = subject["id"].toString(); // Conversão para String
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -97,7 +85,7 @@ class ListSubjectWidget extends StatelessWidget {
               IconButton.filled(
                 onPressed: () async {
                   final summary =
-                      await fetchSummary(subjectId); // Busca o resumo
+                      await fetchSummary(subjectId); // Passando o subjectId como String
 
                   Navigator.push(
                     context,
@@ -108,14 +96,10 @@ class ListSubjectWidget extends StatelessWidget {
                               summary: summary,
                             )
                           : EmptySubjectPage(
-                              subjectName: subject[
-                                  "nameCollection"], // Aqui estamos passando o nome do assunto
-                              userId: subject["userId"]
-                                  .toString(), // Converta para String se for int
-                              folderId: subject["folderId"]
-                                  .toString(), // Converta para String se for int
-                              subjectId: subject["collectionId"]
-                                  .toString(), // Converta para String se for int
+                              subjectName: subject["nameCollection"], // Nome do assunto
+                              userId: subject["userId"].toString(), // Convertendo para String
+                              folderId: subject["folderId"].toString(), // Convertendo para String
+                              subjectId: subject["collectionId"].toString(), // Convertendo para String
                             ),
                     ),
                   );

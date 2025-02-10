@@ -1,6 +1,7 @@
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:aprendoai_front/pages/subjects/listSubject.dart';
+import 'package:aprendoai_front/pages/subjects/subjectDetailPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -9,7 +10,7 @@ class EmptySubjectPage extends StatefulWidget {
   final String subjectName;
   final String userId;
   final String folderId;
-  final String subjectId;
+  final String subjectId; // ID da coleção/subject
 
   const EmptySubjectPage({
     super.key,
@@ -32,10 +33,15 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
     });
 
     // Verificando se os valores necessários não estão nulos ou vazios
-    if (widget.userId.isEmpty || widget.folderId.isEmpty || widget.subjectId.isEmpty) {
-      print("Erro: userId, folderId ou subjectId não podem ser nulos ou vazios.");
+    if (widget.userId.isEmpty ||
+        widget.folderId.isEmpty ||
+        widget.subjectId.isEmpty) {
+      print(
+          "Erro: userId, folderId ou subjectId não podem ser nulos ou vazios.");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro: userId, folderId ou subjectId não podem ser nulos ou vazios.")),
+        const SnackBar(
+            content: Text(
+                "Erro: userId, folderId ou subjectId não podem ser nulos ou vazios.")),
       );
       setState(() {
         isLoading = false;
@@ -62,14 +68,22 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
 
       if (response.statusCode == 201) {
         final data = json.decode(response.body);
-        print("Resumo gerado com sucesso: ${data['data']['content']}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Resumo gerado: ${data['data']['content']}')),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubjectDetailsPage(
+              subjectTitle: widget.subjectName,
+              summary: data['data']['content'],
+            ),
+          ),
         );
       } else {
-        print("Erro ao gerar conteúdo: ${response.statusCode} - ${response.body}");
+        print(
+            "Erro ao gerar conteúdo: ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erro ao gerar conteúdo com IA. Código: ${response.statusCode}")),
+          SnackBar(
+              content: Text(
+                  "Erro ao gerar conteúdo com IA. Código: ${response.statusCode}")),
         );
       }
     } catch (e) {
@@ -114,7 +128,9 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: isLoading ? null : _generateContentWithAI, // Chama a função para gerar o conteúdo
+                  onPressed: isLoading
+                      ? null
+                      : _generateContentWithAI, // Chama a função para gerar o conteúdo
                   icon: isLoading
                       ? const CircularProgressIndicator(color: Colors.black)
                       : const Icon(Icons.auto_awesome),
@@ -123,7 +139,8 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
                     side: const BorderSide(color: Colors.black),
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 20),
                   ),
                 ),
               ],
@@ -134,4 +151,3 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
     );
   }
 }
-
