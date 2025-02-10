@@ -15,9 +15,7 @@ class SubjectDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(subjectTitle, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-      ),
+      appBar: AppBar(title: Text(subjectTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -32,7 +30,10 @@ class SubjectDetailsPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SubjectSummaryPage(subjectTitle: subjectTitle, fullSummary: summary),
+                    builder: (context) => SubjectSummaryPage(
+                      subjectTitle: subjectTitle,
+                      fullSummary: summary,
+                    ),
                   ),
                 );
               },
@@ -67,5 +68,4 @@ class SubjectDetailsPage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  }}

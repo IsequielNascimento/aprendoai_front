@@ -121,7 +121,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
                           MaterialPageRoute(
                             builder: (context) => SubjectPage(
                               userId: userId.toString(), // Passando userId
-                              collectionId: collection["id"].toString(),
+                              folderId: collection["id"].toString(),
                               collectionName: collection["title"],
                             ),
                           ),

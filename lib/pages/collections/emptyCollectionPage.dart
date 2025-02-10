@@ -63,7 +63,7 @@ class EmptyCollectionPage extends StatelessWidget {
               ),
               builder: (context) => AddSubjectModal(
                 userId: userId,
-                collectionId: collectionId,
+                folderId: collectionId,
                 onAddSubject: (newSubject) {
                   // Atualizar ou processar o assunto
                   // Esse trecho de código será chamado quando um novo assunto for adicionado.

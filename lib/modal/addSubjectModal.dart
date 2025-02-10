@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
 
 class AddSubjectModal extends StatefulWidget {
-  final String userId; // Adicione essa linha
-  final String collectionId;
+  final String userId;
+  final String folderId;
   final Function(String) onAddSubject;
 
   const AddSubjectModal({
     Key? key,
-    required this.userId, // Adicione esse parâmetro
-    required this.collectionId,
+    required this.userId,
+    required this.folderId,
     required this.onAddSubject,
   }) : super(key: key);
 
@@ -21,34 +22,48 @@ class AddSubjectModal extends StatefulWidget {
 class _AddSubjectModalState extends State<AddSubjectModal> {
   final TextEditingController _controller = TextEditingController();
   bool isLoading = false;
-Future<void> _addSubject() async {
-  if (_controller.text.isEmpty) return;
 
-  setState(() => isLoading = true);
+  Future<void> _addSubject() async {
+    if (_controller.text.isEmpty) return;
 
-  final response = await http.post(
-    Uri.parse("http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.collectionId}/collection"),
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode({
-      "nameCollection": _controller.text,
-      "resumeCollection": "Descrição breve do assunto", // Adicionando o campo de resumo
-    }),
-  );
+    setState(() => isLoading = true);
 
-  setState(() => isLoading = false);
-
-  if (response.statusCode == 200) {
-    widget.onAddSubject(_controller.text);
-    Navigator.pop(context);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Erro ao adicionar o assunto")),
+    final response = await http.post(
+      Uri.parse("http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "nameCollection": _controller.text,
+        "resumeCollection": "",
+      }),
     );
+
+    setState(() => isLoading = false);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final subjectId = data['id'];  // Captura o subjectId da resposta do servidor
+
+      widget.onAddSubject(_controller.text);
+      Navigator.pop(context); // Fecha o modal
+
+      // Redireciona para a página do novo assunto com os parâmetros necessários
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EmptySubjectPage(
+            subjectName: _controller.text,
+            userId: widget.userId, // Passando userId
+            folderId: widget.folderId, // Passando folderId
+            subjectId: subjectId,  // Passando o subjectId da resposta
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao adicionar o assunto")),
+      );
+    }
   }
-}
-
-
-
 
   @override
   Widget build(BuildContext context) {

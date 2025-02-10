@@ -6,14 +6,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SubjectPage extends StatefulWidget {
-  final String userId; 
-  final String collectionId;
+  final String userId;
+  final String folderId;
   final String collectionName;
 
   const SubjectPage({
     Key? key,
     required this.userId,
-    required this.collectionId,
+    required this.folderId,
     required this.collectionName,
   }) : super(key: key);
 
@@ -31,9 +31,30 @@ class _SubjectPageState extends State<SubjectPage> {
     fetchSubjects();
   }
 
+  Future<String> fetchSummary(String subjectId) async {
+    final url = Uri.parse(
+      "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection/$subjectId/summary?generatedIA=true",
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data["data"].isNotEmpty) {
+          // Se houver dados, retorna o conteúdo do resumo
+          return data["data"][0]["content"] ?? "";
+        }
+      }
+    } catch (e) {
+      print("Erro ao buscar sumário: $e");
+    }
+    return ""; // Caso de erro ou sumário vazio
+  }
+
   Future<void> fetchSubjects() async {
     final url = Uri.parse(
-        "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.collectionId}/collection");
+      "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection",
+    );
 
     try {
       final response = await http.get(url);
@@ -63,7 +84,7 @@ class _SubjectPageState extends State<SubjectPage> {
       builder: (context) {
         return AddSubjectModal(
           userId: widget.userId,
-          collectionId: widget.collectionId,
+          folderId: widget.folderId,
           onAddSubject: (newSubjectName) {
             // Atualize a lista de assuntos após adicionar um novo
             setState(() {
@@ -88,7 +109,7 @@ class _SubjectPageState extends State<SubjectPage> {
         body: Center(
           child: EmptyCollectionPage(
             userId: widget.userId,
-            collectionId: widget.collectionId,
+            collectionId: widget.folderId,
             collectionName: widget.collectionName,
           ),
         ),
@@ -111,7 +132,10 @@ class _SubjectPageState extends State<SubjectPage> {
           ),
         ),
       ),
-      body: ListSubjectWidget(subjects: subjects),
+      body: ListSubjectWidget(
+        subjects: subjects,
+        fetchSummary: fetchSummary, // Passando a função como parâmetro
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddSubjectModal,
         child: const Icon(Icons.add),
