@@ -54,7 +54,7 @@ class _AddSubjectModalState extends State<AddSubjectModal> {
             subjectName: _controller.text,
             userId: widget.userId, // Passando userId
             folderId: widget.folderId, // Passando folderId
-            subjectId: subjectId,  // Passando o subjectId da resposta
+            subjectId: subjectId.toString(),  // Passando o subjectId da resposta
           ),
         ),
       );

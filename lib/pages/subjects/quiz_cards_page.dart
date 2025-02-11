@@ -43,14 +43,15 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
     flashcards = fetchFlashcards(); // Carrega os flashcards ao iniciar a página
   }
 
-  void startQuiz() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QuizPage(
-            questions: []), // Substitua pelo seu método de iniciar o quiz
-      ),
-    );
+  void startQuiz(List<Map<String, dynamic>> questions) {
+    if (questions.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuizPage(questions: questions),
+        ),
+      );
+    }
   }
 
   @override
@@ -156,31 +157,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                       },
                     ),
                   ),
-
-                  // Botão "Criar quiz"
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue[900]!),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.edit, color: Colors.black),
-                        SizedBox(width: 8),
-                        Text("Criar quiz",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-
                   const SizedBox(height: 12),
-
-                  // Botão "Começar revisão"
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -190,7 +167,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
-                      onPressed: startQuiz,
+                      onPressed: () => startQuiz(flashcards),
                       child: const Text("Começar revisão",
                           style: TextStyle(fontSize: 16, color: Colors.white)),
                     ),
