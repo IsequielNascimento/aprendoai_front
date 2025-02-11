@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,7 +27,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
 
   Future<List<Map<String, dynamic>>> fetchFlashcards() async {
     final url = Uri.parse(
-        'http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/flashcard');
+        '$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/flashcard');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -43,14 +44,15 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
     flashcards = fetchFlashcards(); // Carrega os flashcards ao iniciar a página
   }
 
-  void startQuiz() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QuizPage(
-            questions: []), // Substitua pelo seu método de iniciar o quiz
-      ),
-    );
+  void startQuiz(List<Map<String, dynamic>> questions) {
+    if (questions.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuizPage(questions: questions),
+        ),
+      );
+    }
   }
 
   @override
@@ -111,15 +113,13 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 6, horizontal: 8),
                                 decoration: BoxDecoration(
-                                  color: isCreatedByAi
-                                      ? Colors.blue[900]
-                                      : Colors.blue[300],
+                                  color: Colors.blue[900],
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  card["source"] ?? "Fonte desconhecida",
+                                  card["source"] ?? "Gerado por IA",
                                   style: const TextStyle(
-                                      color: Colors.white, fontSize: 12),
+                                      color: Colors.white, fontSize: 16),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -156,31 +156,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                       },
                     ),
                   ),
-
-                  // Botão "Criar quiz"
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue[900]!),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.edit, color: Colors.black),
-                        SizedBox(width: 8),
-                        Text("Criar quiz",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-
                   const SizedBox(height: 12),
-
-                  // Botão "Começar revisão"
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -190,7 +166,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
-                      onPressed: startQuiz,
+                      onPressed: () => startQuiz(flashcards),
                       child: const Text("Começar revisão",
                           style: TextStyle(fontSize: 16, color: Colors.white)),
                     ),

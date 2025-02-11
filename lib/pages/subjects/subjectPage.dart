@@ -1,9 +1,9 @@
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
-import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:aprendoai_front/pages/subjects/EmptySubjectPage.dart';
 import 'package:flutter/material.dart';
 import 'listSubject.dart';
 import 'package:http/http.dart' as http;
+import "package:aprendoai_front/constants/constants.dart";
 import 'dart:convert';
 
 class SubjectPage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _SubjectPageState extends State<SubjectPage> {
 
   Future<String> fetchSummary(String subjectId) async {
     final url = Uri.parse(
-      "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection/$subjectId/summary?generatedIA=true",
+      "$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/$subjectId/summary?generatedIA=true",
     );
 
     try {
@@ -54,7 +54,7 @@ class _SubjectPageState extends State<SubjectPage> {
 
   Future<void> fetchSubjects() async {
     final url = Uri.parse(
-      "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection",
+      "$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection",
     );
 
     try {
@@ -120,8 +120,10 @@ class _SubjectPageState extends State<SubjectPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _showAddSubjectModal,
-          child: const Icon(Icons.add),
           backgroundColor: const Color(0xFF05274D),
+          child: const Icon(
+            Icons.add,
+          ),
         ),
       );
     }
@@ -145,8 +147,11 @@ class _SubjectPageState extends State<SubjectPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddSubjectModal,
-        child: const Icon(Icons.add),
         backgroundColor: const Color(0xFF05274D),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
