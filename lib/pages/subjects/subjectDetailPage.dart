@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/themes/app_themes.dart';
 import 'package:flutter/material.dart';
 import 'subject_summary_page.dart';
 import 'quiz_cards_page.dart';
@@ -45,7 +46,7 @@ class SubjectDetailsPage extends StatelessWidget {
                 ),
                 child: Text(
                   summary.length > 100
-                      ? "${summary.substring(0, 100)}..."
+                      ? "${summary.substring(0, 255)}..."
                       : summary,
                   style: const TextStyle(color: Colors.white),
                 ),
@@ -66,8 +67,14 @@ class SubjectDetailsPage extends StatelessWidget {
                   ),
                 );
               },
-              icon: const Icon(Icons.create),
-              label: const Text("Lista Quiz"),
+              icon: Icon(
+                Icons.create,
+                color: Appthemes.primary,
+              ),
+              label: Text(
+                "Lista de perguntas",
+                style: TextStyle(color: Appthemes.primary),
+              ),
             ),
           ],
         ),

@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -29,7 +30,7 @@ class _AddSubjectModalState extends State<AddSubjectModal> {
     setState(() => isLoading = true);
 
     final response = await http.post(
-      Uri.parse("http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection"),
+      Uri.parse("$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "nameCollection": _controller.text,

@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:aprendoai_front/pages/subjects/listSubject.dart';
@@ -50,7 +51,7 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
     }
 
     final url = Uri.parse(
-      "http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/summary?generatedIA=true",
+      "$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/summary?generatedIA=true",
     );
 
     try {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -49,7 +50,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
 
     final response = await http.get(
       Uri.parse(
-          'http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+          '$baseUrl/api/user/$userId/folder?quantity=$quantity&page=$page'),
     );
 
     if (response.statusCode == 200) {
@@ -91,7 +92,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
 
     final response = await http.post(
       Uri.parse(
-          'http://192.168.0.2:3000/api/user/$userId/folder?quantity=$quantity&page=$page'),
+          '$baseUrl/api/user/$userId/folder?quantity=$quantity&page=$page'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"nameFolder": name, "userId": userId}),
     );
@@ -147,36 +148,33 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
           color: const Color(0xFF05274D),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  collection["image"],
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                collection["image"],
+                 height: 100,
+                 width: 100,
+                fit: BoxFit.cover,
               ),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      collection["title"],
-                      style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    collection["title"],
+                    style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

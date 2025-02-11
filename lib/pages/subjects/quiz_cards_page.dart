@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,7 +27,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
 
   Future<List<Map<String, dynamic>>> fetchFlashcards() async {
     final url = Uri.parse(
-        'http://192.168.0.2:3000/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/flashcard');
+        '$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/flashcard');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -112,15 +113,13 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 6, horizontal: 8),
                                 decoration: BoxDecoration(
-                                  color: isCreatedByAi
-                                      ? Colors.blue[900]
-                                      : Colors.blue[300],
+                                  color: Colors.blue[900],
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  card["source"] ?? "Fonte desconhecida",
+                                  card["source"] ?? "Gerado por IA",
                                   style: const TextStyle(
-                                      color: Colors.white, fontSize: 12),
+                                      color: Colors.white, fontSize: 16),
                                 ),
                               ),
                               const SizedBox(height: 8),

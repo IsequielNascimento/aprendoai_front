@@ -1,3 +1,4 @@
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'login_page.dart';
@@ -13,14 +14,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController(); // Apenas visual, pq não vi no back
+  final TextEditingController phoneController = TextEditingController(); 
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> register() async {
     try {
       var dio = Dio();
       var response = await dio.post(
-        'http://192.168.0.2:3000/api/register', //AAAAAAAAAAAAAAAAA NADA FUNCIONA
+        '$baseUrl/api/register',
         data: {
           'firstName': nameController.text,
           'lastName': lastNameController.text,
@@ -49,6 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:true,
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

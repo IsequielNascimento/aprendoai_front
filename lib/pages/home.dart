@@ -8,14 +8,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(""),  // Pode ser deixado vazio se não for necessário um título
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 48),
             Row(
               children: [
                 const Text(
@@ -29,20 +27,22 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const WeeklySummary(),
-            Row(
-              children: [
-                const Text(
-                  "Seus últimos estudos",
-                  style: TextStyle(
-                    color: Color.fromRGBO(5, 39, 77, 1),
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  const Text(
+                    "Seus últimos estudos",
+                    style: TextStyle(
+                      color: Color.fromRGBO(5, 39, 77, 1),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const ListCollectionWidget(),
-            const SizedBox(height: 8),  // Pode ser mais legível que o Padding
           ],
         ),
       ),

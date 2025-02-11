@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'register_page.dart';
 
+import "package:aprendoai_front/constants/constants.dart";
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -16,39 +18,41 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool rememberMe = false;
 
-Future<void> login() async {
-  try {
-    var dio = Dio();
-    var response = await dio.post(
-      'http://192.168.0.2:3000/api/login', 
-      data: {
-        'email': emailController.text,
-        'password': passwordController.text,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var userId = response.data['user']['id']; // Ajuste para corresponder à estrutura da API
-
-      // Armazena o ID do usuário localmente
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('userId', userId);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Aprendoai()),
+  Future<void> login() async {
+    try {
+      var dio = Dio();
+      var response = await dio.post(
+        '$baseUrl/api/login',
+        data: {
+          'email': emailController.text,
+          'password': passwordController.text,
+        },
       );
-    } else {
+
+      if (response.statusCode == 200) {
+        var userId = response.data['user']
+            ['id']; // Ajuste para corresponder à estrutura da API
+
+        // Armazena o ID do usuário localmente
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('userId', userId);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Aprendoai()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(response.data['message'] ?? 'Erro ao fazer login')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.data['message'] ?? 'Erro ao fazer login')),
+        const SnackBar(content: Text('Erro de conexão com o servidor')),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Erro de conexão com o servidor')),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +92,7 @@ Future<void> login() async {
                   onChanged: (value) {
                     setState(() => rememberMe = value!);
                   },
-                ),  
+                ),
                 const Text('Lembrar de mim'),
                 const Spacer(),
                 TextButton(
@@ -100,7 +104,8 @@ Future<void> login() async {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: login,
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50)),
               child: const Text('Login'),
             ),
             TextButton(
