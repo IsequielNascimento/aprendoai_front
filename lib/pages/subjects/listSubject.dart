@@ -1,40 +1,62 @@
 import 'package:flutter/material.dart';
+import 'emptySubjectPage.dart';
 import 'subjectDetailPage.dart';
 
 class ListSubjectWidget extends StatelessWidget {
   final List<Map<String, dynamic>> subjects;
+  final Future<String> Function(String subjectId) fetchSummary;
+  final String userId;
+  final String folderId;
 
-  const ListSubjectWidget({super.key, required this.subjects});
+  const ListSubjectWidget({
+    Key? key,
+    required this.subjects,
+    required this.userId,
+    required this.folderId,
+    required this.fetchSummary,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: subjects.length,
       itemBuilder: (context, index) {
         final subject = subjects[index];
-
         return GestureDetector(
-          onTap: () {
+          onTap: () async {
+            final summary = await fetchSummary(subject["id"].toString());
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SubjectDetailsPage(
-                  subjectTitle: subject["title"],
-                  summary: "Este é um resumo do assunto ${subject["title"]}.",
-                ),
+                builder: (context) => summary.isEmpty
+                    ? EmptySubjectPage(
+                        subjectName: subject["nameCollection"],
+                        userId: userId,
+                        folderId: folderId,
+                        subjectId: subject["id"].toString(),
+                      )
+                    : SubjectDetailsPage(
+                        userId: userId, // Adicionei userId
+                        folderId: folderId, // Adicionei folderId
+                        subjectId:
+                            subject["id"].toString(), // Adicionei subjectId
+                        subjectTitle: subject["nameCollection"],
+                        summary: summary,
+                      ),
               ),
             );
           },
-          child: _buildSubjectCard(context, subject), // Passando o contexto aqui
+          child: _buildSubjectCard(context, subject), // Passando o contexto
         );
       },
     );
   }
 
-  Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) { // Agora recebe o contexto
+  Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF05274D),
@@ -47,16 +69,16 @@ class ListSubjectWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  subject["image"],
-                  height: 80,
-                  width: 80,
+                  "assets/defaultSubject.png",
+                  height: 100,
+                  width: 100,
                   fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: 18),
               Expanded(
                 child: Text(
-                  subject["title"],
+                  subject["nameCollection"],
                   style: const TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -65,14 +87,26 @@ class ListSubjectWidget extends StatelessWidget {
                 ),
               ),
               IconButton.filled(
-                onPressed: () {
+                onPressed: () async {
+                  final summary = await fetchSummary(subject["id"].toString());
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SubjectDetailsPage(
-                        subjectTitle: subject["title"],
-                        summary: "Este é um resumo do assunto ${subject["title"]}.",
-                      ),
+                      builder: (context) => summary.isNotEmpty
+                          ? SubjectDetailsPage(
+                              userId: userId, // Adicionei userId
+                              folderId: folderId, // Adicionei folderId
+                              subjectId: subject["id"]
+                                  .toString(), // Adicionei subjectId
+                              subjectTitle: subject["nameCollection"],
+                              summary: summary,
+                            )
+                          : EmptySubjectPage(
+                              subjectName: subject["nameCollection"],
+                              userId: userId,
+                              folderId: folderId,
+                              subjectId: subject["id"].toString(),
+                            ),
                     ),
                   );
                 },

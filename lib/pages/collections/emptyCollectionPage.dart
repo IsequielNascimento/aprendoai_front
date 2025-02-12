@@ -1,17 +1,24 @@
-import 'package:aprendoai_front/modal/addSubjectModal.dart';
 import 'package:flutter/material.dart';
+import 'package:aprendoai_front/modal/addSubjectModal.dart';
 
 class EmptyCollectionPage extends StatelessWidget {
-  final String subjectName;
+  final String userId;
+  final String collectionId;
+  final String collectionName;
 
-  const EmptyCollectionPage({super.key, required this.subjectName});
+  const EmptyCollectionPage({
+    Key? key,
+    required this.userId,
+    required this.collectionId,
+    required this.collectionName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          subjectName,
+          collectionName,
           style: const TextStyle(
             color: Color.fromRGBO(5, 39, 77, 1),
             fontSize: 25,
@@ -43,16 +50,27 @@ class EmptyCollectionPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'unique_tag_1', // Atribua uma tag única
         backgroundColor: const Color(0xFF05274D),
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            builder: (context) => const AddSubjectModal(),
-          );
+          // Evitar que o modal sobreponha ou descongele a tela
+          Future.delayed(Duration.zero, () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) => AddSubjectModal(
+                userId: userId,
+                folderId: collectionId,
+                onAddSubject: (newSubject) {
+                  // Atualizar ou processar o assunto
+                  // Esse trecho de código será chamado quando um novo assunto for adicionado.
+                },
+              ),
+            );
+          });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),

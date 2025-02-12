@@ -1,7 +1,10 @@
-import 'package:aprendoai_front/pages/home.dart';
+import 'package:aprendoai_front/pages/aprendoAI.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_page.dart';
+
+import "package:aprendoai_front/constants/constants.dart";
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var dio = Dio();
       var response = await dio.post(
-        'localhost:3000/api/login/', 
+        '$baseUrl/api/login',
         data: {
           'email': emailController.text,
           'password': passwordController.text,
@@ -27,13 +30,21 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (response.statusCode == 200) {
+        var userId = response.data['user']
+            ['id']; // Ajuste para corresponder à estrutura da API
+
+        // Armazena o ID do usuário localmente
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('userId', userId);
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const Aprendoai()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'] ?? 'Erro ao fazer login')),
+          SnackBar(
+              content: Text(response.data['message'] ?? 'Erro ao fazer login')),
         );
       }
     } catch (e) {
@@ -93,7 +104,8 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: login,
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50)),
               child: const Text('Login'),
             ),
             TextButton(
