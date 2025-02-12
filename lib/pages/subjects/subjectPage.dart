@@ -139,11 +139,16 @@ class _SubjectPageState extends State<SubjectPage> {
           ),
         ),
       ),
-      body: ListSubjectWidget(
-        subjects: subjects,
-        fetchSummary: fetchSummary,
-        userId: widget.userId,
-        folderId: widget.folderId,
+      body: 
+      SingleChildScrollView(
+        child:
+          ListSubjectWidget(
+            subjects: subjects,
+            fetchSummary: fetchSummary,
+            userId: widget.userId,
+            folderId: widget.folderId,
+          ),
+        
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddSubjectModal,

@@ -19,96 +19,91 @@ class ListSubjectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: subjects.length,
       itemBuilder: (context, index) {
         final subject = subjects[index];
-        final String subjectId = subject["id"].toString(); // Conversão para String
-
-        return ListTile(
-            title: Text(subject["nameCollection"]),
-            onTap: () async {
-              String summary = await fetchSummary(subjectId); // Passando o subjectId como String
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => summary.isEmpty
-                      ? EmptySubjectPage(
-                          subjectName: subject['nameCollection'],
-                          userId: userId,
-                          folderId: folderId,
-                          subjectId: subjectId, // Usando o subjectId como String
-                        )
-                      : SubjectDetailsPage(
-                          subjectTitle: subject['nameCollection'],
-                          summary: summary,
-                        ),
-                ),
-              );
-            });
+        return GestureDetector(
+          onTap: () async {
+            final summary = await fetchSummary(subject["id"].toString());
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => summary.isEmpty
+                    ? EmptySubjectPage(
+                        subjectName: subject["nameCollection"],
+                        userId: userId,
+                        folderId: folderId,
+                        subjectId: subject["id"].toString(),
+                      )
+                    : SubjectDetailsPage(
+                        subjectTitle: subject["nameCollection"],
+                        summary: summary,
+                      ),
+              ),
+            );
+          },
+          child: _buildSubjectCard(context, subject), // Passando o contexto
+        );
       },
     );
   }
 
   Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) {
-    final String subjectId = subject["id"].toString(); // Conversão para String
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF05274D),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  "assets/teste.png",
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.cover,
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                "assets/defaultSubject.png",
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Text(
+                subject["nameCollection"],
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Text(
-                  subject["nameCollection"],
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+            ),
+            IconButton.filled(
+              onPressed: () async {
+                final summary = await fetchSummary(subject["id"].toString());
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => summary.isNotEmpty
+                        ? SubjectDetailsPage(
+                            subjectTitle: subject["nameCollection"],
+                            summary: summary,
+                          )
+                        : EmptySubjectPage(
+                            subjectName: subject["nameCollection"],
+                            userId: userId,
+                            folderId: folderId,
+                            subjectId: subject["id"].toString(),
+                          ),
                   ),
-                ),
-              ),
-              IconButton.filled(
-                onPressed: () async {
-                  final summary =
-                      await fetchSummary(subjectId); // Passando o subjectId como String
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => summary.isNotEmpty
-                          ? SubjectDetailsPage(
-                              subjectTitle: subject["nameCollection"],
-                              summary: summary,
-                            )
-                          : EmptySubjectPage(
-                              subjectName: subject["nameCollection"], // Nome do assunto
-                              userId: subject["userId"].toString(), // Convertendo para String
-                              folderId: subject["folderId"].toString(), // Convertendo para String
-                              subjectId: subject["collectionId"].toString(), // Convertendo para String
-                            ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.arrow_forward, color: Colors.black),
-                style: IconButton.styleFrom(backgroundColor: Colors.white),
-              ),
-            ],
-          ),
+                );
+              },
+              icon: const Icon(Icons.arrow_forward, color: Colors.black),
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
+            ),
+          ],
         ),
       ),
     );
