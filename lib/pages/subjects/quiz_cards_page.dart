@@ -1,4 +1,5 @@
 import 'package:aprendoai_front/constants/constants.dart';
+import 'package:aprendoai_front/themes/app_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -38,21 +39,116 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
     }
   }
 
+  Future<String> fetchSummary() async {
+    final url = Uri.parse(
+        '$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/summary?generatedIA=true');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['data'][0]['content']; // Retorna o conteúdo do resumo
+    } else {
+      throw Exception('Falha ao carregar resumo');
+    }
+  }
+
+  Future<void> createFlashcards(String content, int quantity) async {
+    final url = Uri.parse(
+        '$baseUrl/api/user/${widget.userId}/folder/${widget.folderId}/collection/${widget.subjectId}/flashcard?generatedIA=true');
+
+    final body = jsonEncode({
+      'userInput': content,
+      'quantity': quantity,
+    });
+
+    try {
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'}, body: body);
+
+      print("Resposta do servidor: ${response.statusCode} - ${response.body}");
+
+      if (response.statusCode == 201) {
+        if (mounted) {
+          setState(() {
+            flashcards = fetchFlashcards(); // Atualiza a lista de flashcards
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Flashcards criados com sucesso!')));
+          }
+        }
+      } else {
+        // Trate o erro de outra forma, se necessário
+      }
+    } catch (e) {
+      print("Erro de exceção: $e");
+      // Exibindo o SnackBar após verificar se o widget está montado
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Falha ao criar flashcards')));
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     flashcards = fetchFlashcards(); // Carrega os flashcards ao iniciar a página
   }
 
-  void startQuiz(List<Map<String, dynamic>> questions) {
-    if (questions.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => QuizPage(questions: questions),
-        ),
-      );
-    }
+void startQuiz(List<Map<String, dynamic>> questions) {
+  if (questions.isNotEmpty) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizPage(questions: questions),
+      ),
+    );
+  }
+}
+
+
+  void showFlashcardDialog() {
+    TextEditingController quantityController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Criar Flashcards'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Quantos flashcards você quer criar?'),
+              TextField(
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(hintText: 'Quantidade'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                int quantity = int.tryParse(quantityController.text) ?? 1;
+                String content = await fetchSummary();
+                await createFlashcards(content, quantity);
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -79,7 +175,28 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Erro: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Nenhum flashcard encontrado.'));
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Center(child: Text('Nenhum flashcard encontrado.')),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed:
+                          showFlashcardDialog, // Botão para criar flashcards
+                      child: const Text("Criar Flashcards",
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
+                    ),
+                  ),
+                ],
+              );
             } else {
               final flashcards = snapshot.data!;
               return Column(
@@ -113,7 +230,7 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 6, horizontal: 8),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue[900],
+                                  color: Appthemes.primary,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -162,13 +279,28 @@ class _QuizCardsPageState extends State<QuizCardsPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.blue[900],
+                        backgroundColor: Appthemes.primary,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () => startQuiz(flashcards),
                       child: const Text("Começar revisão",
                           style: TextStyle(fontSize: 16, color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed:
+                          showFlashcardDialog, // Botão para criar flashcards
+                      child: const Text("Criar Flashcards",
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
                     ),
                   ),
                 ],
