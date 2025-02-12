@@ -13,19 +13,17 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   int _myIndex = 0;
 // Rotas para as telas
-  List<Widget> pagesList = const [
-    HomePage(),
-    CollectionPage(),
-    PerfilPage(),
+  List<Widget> pagesList = [
+    const HomePage(),
+    const CollectionPage(),
+    PerfilPage(userId: 3), // Passando um ID fixo
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: pagesList[_myIndex]),
       bottomNavigationBar: NavigationBar(
-
-      //customização da navigationBar
+        //customização da navigationBar
         indicatorColor: Color.fromRGBO(5, 39, 77, 1),
         height: 80,
         elevation: 0,
@@ -62,9 +60,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
               icon: Icon(Icons.account_circle_outlined),
               label: "Perfil"),
         ],
-
-        
-       
       ),
     );
   }

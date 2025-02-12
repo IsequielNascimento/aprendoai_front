@@ -1,8 +1,53 @@
+import 'dart:convert';
+import 'package:aprendoai_front/constants/constants.dart';
 import 'package:aprendoai_front/themes/app_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class PerfilPage extends StatelessWidget {
-  const PerfilPage({super.key});
+class PerfilPage extends StatefulWidget {
+  final int userId;
+
+  const PerfilPage({super.key, required this.userId});
+
+  @override
+  _PerfilPageState createState() => _PerfilPageState();
+}
+
+class _PerfilPageState extends State<PerfilPage> {
+  String userName = "Carregando...";
+  int totalCollections = 0;
+  int totalFlashcards = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      final response = await http.get(
+          Uri.parse('$baseUrl/api/user/${widget.userId}'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body)['data'];
+
+        setState(() {
+          userName = data['name'];
+          totalCollections = data['totalCollections'];
+          totalFlashcards = data['totalFlashcards'];
+        });
+      } else {
+        setState(() {
+          userName = "Erro ao carregar";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        userName = "Erro na conexão";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +83,18 @@ class PerfilPage extends StatelessWidget {
             backgroundImage: AssetImage("assets/profile.jpg"),
           ),
           const SizedBox(height: 10),
-          const Text(
-            "PSI",
-            style: TextStyle(
+          Text(
+            userName,
+            style: const TextStyle(
                 color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              _ProfileStat(value: "3", label: "Coleções"),
-              SizedBox(width: 20),
-              _ProfileStat(value: "16", label: "Passos"),
-              SizedBox(width: 20),
-              _ProfileStat(value: "299", label: "Questões"),
-              SizedBox(width: 20),
-              _ProfileStat(value: "14", label: "Dias"),
+            children: [
+              _ProfileStat(value: "$totalCollections", label: "Coleções"),
+              const SizedBox(width: 20),
+              _ProfileStat(value: "$totalFlashcards", label: "Questões"),
             ],
           ),
         ],

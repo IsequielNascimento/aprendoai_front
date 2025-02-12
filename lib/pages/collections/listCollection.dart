@@ -16,12 +16,12 @@ class ListCollectionWidget extends StatefulWidget {
 class ListCollectionWidgetState extends State<ListCollectionWidget> {
   List<Map<String, dynamic>> collections = [];
   bool isLoading = true;
-  int? userId; // Adicione esta variável
+  int? userId;
 
   @override
   void initState() {
     super.initState();
-    _loadUserId(); // Carrega o userId primeiro
+    _loadUserId();
   }
 
   Future<void> _loadUserId() async {
@@ -31,16 +31,13 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
     });
 
     if (userId != null) {
-      fetchCollections(); // Buscar coleções apenas se userId estiver disponível
+      fetchCollections();
     } else {
       setState(() => isLoading = false);
     }
   }
 
   Future<void> fetchCollections() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userId = prefs.getInt('userId');
-
     if (userId == null) {
       setState(() => isLoading = false);
       return;
@@ -49,57 +46,101 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
     const int quantity = 1000;
     const int page = 1;
 
-    final response = await http.get(
-      Uri.parse(
-          '$baseUrl/api/user/$userId/folder?quantity=$quantity&page=$page'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$baseUrl/api/user/$userId/folder?quantity=$quantity&page=$page'),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      // setState(() {
-      //   collections =
-      //       List<Map<String, dynamic>>.from(data['data'].map((folder) => {
-      //             "title": folder["nameFolder"],
-      //             "image": "assets/teste.png",
-      //             //"subjects": [], // Adiciona um campo subjects vazio por enquanto
-      //             "subjects": <Map<String, dynamic>>[],
-      //           }));
-      //   isLoading = false;
-      // });
-      setState(() {
-        collections =
-            List<Map<String, dynamic>>.from(data['data'].map((folder) => {
-                  "id": folder[
-                      "id"], // ID da coleção, necessário para a navegação
-                  "title": folder["nameFolder"],
-                  "image": "assets/teste.png",
-                  "subjects": <Map<String, dynamic>>[],
-                }));
-        isLoading = false;
-      });
-    } else {
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          collections =
+              List<Map<String, dynamic>>.from(data['data'].map((folder) => {
+                    "id": folder["id"],
+                    "title": folder["nameFolder"],
+                    "image": "assets/teste.png",
+                    "subjects": <Map<String, dynamic>>[],
+                  }));
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Erro ao carregar coleções: ${response.statusCode}");
+      }
+    } catch (e) {
       setState(() => isLoading = false);
+      debugPrint("Erro ao buscar coleções: $e");
     }
   }
 
   Future<void> addCollection(String name) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userId = prefs.getInt('userId');
-    const int quantity = 20;
-    const int page = 1;
-
     if (userId == null) return;
 
     final response = await http.post(
-      Uri.parse(
-          '$baseUrl/api/user/$userId/folder?quantity=$quantity&page=$page'),
+      Uri.parse('$baseUrl/api/user/$userId/folder'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"nameFolder": name, "userId": userId}),
+      body: jsonEncode({"nameFolder": name}),
     );
 
     if (response.statusCode == 200) {
-      fetchCollections();
+      final newCollection = {
+        "id": jsonDecode(response.body)["data"]["id"],
+        "title": name,
+        "image": "assets/teste.png",
+        "subjects": <Map<String, dynamic>>[],
+      };
+
+      setState(() {
+        collections.add(newCollection);
+      });
+    } else {
+      debugPrint("Erro ao adicionar coleção: ${response.body}");
+    }
+  }
+
+  void _handleCollectionTap(Map<String, dynamic> collection) async {
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro: usuário não identificado.")),
+      );
+      return;
+    }
+
+    int folderId = collection["id"];
+
+    try {
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/user/$userId/folder/$folderId'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final bool hasSubjects =
+            data['data']?['collection']?.isNotEmpty ?? false;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => hasSubjects
+                ? SubjectPage(
+                    userId: userId.toString(),
+                    folderId: folderId.toString(),
+                    collectionName: collection["title"],
+                  )
+                : EmptyCollectionPage(
+                    userId: userId.toString(),
+                    collectionId: folderId.toString(),
+                    collectionName: collection["title"],
+                  ),
+          ),
+        );
+      } else {
+        throw Exception("Erro ao carregar a coleção.");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro ao carregar a coleção.")),
+      );
+      debugPrint("Erro: $e");
     }
   }
 
@@ -116,56 +157,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
                 itemBuilder: (context, index) {
                   final collection = collections[index];
                   return GestureDetector(
-                    onTap: () async {
-                      if (userId == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Erro: usuário não identificado.")),
-                        );
-                        return;
-                      }
-
-                      int folderId = collection["id"];
-                      final response = await http.get(
-                        Uri.parse('$baseUrl/api/user/$userId/folder/$folderId'),
-                      );
-
-                      if (response.statusCode == 200) {
-                        final data = jsonDecode(response.body);
-
-                        if (data['data'] != null &&
-                            data['data']['collection'].isNotEmpty) {
-                          // Se houver assuntos, navegar para SubjectPage
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubjectPage(
-                                userId: userId.toString(),
-                                folderId: folderId.toString(),
-                                collectionName: collection["title"],
-                              ),
-                            ),
-                          );
-                        } else {
-                          // Se não houver assuntos, ir para EmptyCollectionPage
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EmptyCollectionPage(
-                                userId: userId.toString(),
-                                collectionId: folderId.toString(),
-                                collectionName: collection["title"],
-                              ),
-                            ),
-                          );
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Erro ao carregar a coleção.")),
-                        );
-                      }
-                    },
+                    onTap: () => _handleCollectionTap(collection),
                     child: _buildCollectionCard(collection),
                   );
                 },
