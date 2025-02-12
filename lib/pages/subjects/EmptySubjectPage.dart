@@ -73,8 +73,11 @@ class _EmptySubjectPageState extends State<EmptySubjectPage> {
           context,
           MaterialPageRoute(
             builder: (context) => SubjectDetailsPage(
+              userId: widget.userId, // Adicionei userId
+              folderId: widget.folderId, // Adicionei folderId
+              subjectId: widget.subjectId, // Adicionei subjectId
               subjectTitle: widget.subjectName,
-              summary: data['data']['content'],
+              summary: data['data'],
             ),
           ),
         );

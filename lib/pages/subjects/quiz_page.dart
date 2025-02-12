@@ -193,7 +193,7 @@ class _QuizPageState extends State<QuizPage> {
                   ),
                 ),
                 onPressed: () {
-                  // Lógica para favoritar a pergunta
+                  // Lógica para favoritar a pergunta pendente para incrementar
                 },
                 child: const Text("Favoritar",
                     style: TextStyle(fontSize: 16, color: Colors.white)),

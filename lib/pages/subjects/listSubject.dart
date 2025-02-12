@@ -38,6 +38,10 @@ class ListSubjectWidget extends StatelessWidget {
                         subjectId: subject["id"].toString(),
                       )
                     : SubjectDetailsPage(
+                        userId: userId, // Adicionei userId
+                        folderId: folderId, // Adicionei folderId
+                        subjectId:
+                            subject["id"].toString(), // Adicionei subjectId
                         subjectTitle: subject["nameCollection"],
                         summary: summary,
                       ),
@@ -58,52 +62,59 @@ class ListSubjectWidget extends StatelessWidget {
           color: const Color(0xFF05274D),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                "assets/defaultSubject.png",
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Text(
-                subject["nameCollection"],
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  "assets/defaultSubject.png",
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            IconButton.filled(
-              onPressed: () async {
-                final summary = await fetchSummary(subject["id"].toString());
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => summary.isNotEmpty
-                        ? SubjectDetailsPage(
-                            subjectTitle: subject["nameCollection"],
-                            summary: summary,
-                          )
-                        : EmptySubjectPage(
-                            subjectName: subject["nameCollection"],
-                            userId: userId,
-                            folderId: folderId,
-                            subjectId: subject["id"].toString(),
-                          ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: Text(
+                  subject["nameCollection"],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              },
-              icon: const Icon(Icons.arrow_forward, color: Colors.black),
-              style: IconButton.styleFrom(backgroundColor: Colors.white),
-            ),
-          ],
+                ),
+              ),
+              IconButton.filled(
+                onPressed: () async {
+                  final summary = await fetchSummary(subject["id"].toString());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => summary.isNotEmpty
+                          ? SubjectDetailsPage(
+                              userId: userId, // Adicionei userId
+                              folderId: folderId, // Adicionei folderId
+                              subjectId: subject["id"]
+                                  .toString(), // Adicionei subjectId
+                              subjectTitle: subject["nameCollection"],
+                              summary: summary,
+                            )
+                          : EmptySubjectPage(
+                              subjectName: subject["nameCollection"],
+                              userId: userId,
+                              folderId: folderId,
+                              subjectId: subject["id"].toString(),
+                            ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.arrow_forward, color: Colors.black),
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );

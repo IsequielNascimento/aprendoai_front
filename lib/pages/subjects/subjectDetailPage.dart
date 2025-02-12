@@ -4,11 +4,17 @@ import 'subject_summary_page.dart';
 import 'quiz_cards_page.dart';
 
 class SubjectDetailsPage extends StatelessWidget {
+  final String userId;
+  final String folderId;
+  final String subjectId;
   final String subjectTitle;
   final String summary;
 
   const SubjectDetailsPage({
     super.key,
+    required this.userId,
+    required this.folderId,
+    required this.subjectId,
     required this.subjectTitle,
     required this.summary,
   });
@@ -59,9 +65,9 @@ class SubjectDetailsPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => QuizCardsPage(
-                      userId: "1", // Substitua pelo ID real do usuário
-                      folderId: "1", // Substitua pelo ID real da pasta
-                      subjectId: "1", // Substitua pelo ID real da coleção
+                      userId: userId,
+                      folderId: folderId,
+                      subjectId: subjectId,
                       subjectTitle: subjectTitle,
                     ),
                   ),
