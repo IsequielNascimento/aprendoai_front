@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aprendoai_front/constants/constants.dart';
+import 'package:aprendoai_front/pages/collections/emptyCollectionPage.dart';
 import 'package:aprendoai_front/pages/subjects/subjectPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -70,7 +71,7 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
         collections =
             List<Map<String, dynamic>>.from(data['data'].map((folder) => {
                   "id": folder[
-                      "id"], // ID da coleção, necessário para a navegação 
+                      "id"], // ID da coleção, necessário para a navegação
                   "title": folder["nameFolder"],
                   "image": "assets/teste.png",
                   "subjects": <Map<String, dynamic>>[],
@@ -115,22 +116,53 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
                 itemBuilder: (context, index) {
                   final collection = collections[index];
                   return GestureDetector(
-                    onTap: () {
-                      if (userId != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SubjectPage(
-                              userId: userId.toString(), // Passando userId
-                              folderId: collection["id"].toString(),
-                              collectionName: collection["title"],
-                            ),
-                          ),
-                        );
-                      } else {
+                    onTap: () async {
+                      if (userId == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text("Erro: usuário não identificado.")),
+                        );
+                        return;
+                      }
+
+                      int folderId = collection["id"];
+                      final response = await http.get(
+                        Uri.parse('$baseUrl/api/user/$userId/folder/$folderId'),
+                      );
+
+                      if (response.statusCode == 200) {
+                        final data = jsonDecode(response.body);
+
+                        if (data['data'] != null &&
+                            data['data']['collection'].isNotEmpty) {
+                          // Se houver assuntos, navegar para SubjectPage
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubjectPage(
+                                userId: userId.toString(),
+                                folderId: folderId.toString(),
+                                collectionName: collection["title"],
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Se não houver assuntos, ir para EmptyCollectionPage
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EmptyCollectionPage(
+                                userId: userId.toString(),
+                                collectionId: folderId.toString(),
+                                collectionName: collection["title"],
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Erro ao carregar a coleção.")),
                         );
                       }
                     },
@@ -154,8 +186,8 @@ class ListCollectionWidgetState extends State<ListCollectionWidget> {
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 collection["image"],
-                 height: 100,
-                 width: 100,
+                height: 100,
+                width: 100,
                 fit: BoxFit.cover,
               ),
             ),
